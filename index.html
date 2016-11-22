@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link href="css/style.css" rel="stylesheet">
+<link rel="stylesheet" href="css/jquery-ui.css">
+<body>
+    <div class="bigFontSize"></div>
+    <div class="container">
+        <svg id="charts">
+            <g id="chart1"></g>
+            <g id="chart2"></g>
+            <g id="chart3"></g>
+            <g id="chart4"></g>
+            <g id="chart5"></g>
+        </svg>
+    </div>
+</body>
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/d3.v3.min.js"></script>
+<script src="js/Chart.js"></script>
+<script>
+
+    var myTimer;
+    var charts = [];
+    var heightRateArr = [0.075, 0.0375, 0.075, 0];
+    var colorArr = ['#127d69', '#169f85', '#1ab394', '#46bea2','#ee8f9d','#af313a'];
+    var change_speed = 0.01;
+    var data1_flag = 0;
+
+    var data = [
+        {
+            count: 100,
+            value: 24.1,
+            conversion: 0,
+            conversionChange: 0,
+            title: 'PASSER-BY'
+        },
+        {
+            count: 80,
+            value: 28.2,
+            conversion: 85.2,
+            conversionChange: 5,
+            title: 'VISITOR'
+        },
+        {
+            count: 20,
+            value: 37.5,
+            conversion: 75.3,
+            conversionChange: 10,
+            title: 'BUYER'
+        },
+        {
+            count: 10,
+            value: 235.6,
+            conversion: 15.9,
+            conversionChange: -5,
+            title: 'LOYAL'
+        },
+    ];
+
+    var data1 = [
+        {
+            count: 10000,
+            value: 24.1,
+            conversion: 54,
+            conversionChange: 10,
+            title: 'PASSER-BY'
+        },
+        {
+            count: 8520,
+            value: 28.2,
+            conversion: 85.2,
+            conversionChange: 15,
+            title: 'VISITOR'
+        },
+        {
+            count: 6420,
+            value: 37.5,
+            conversion: 75.3,
+            conversionChange: 30,
+            title: 'BUYER'
+        },
+        {
+            count: 1021,
+            value: 235.6,
+            conversion: 15.9,
+            conversionChange: -20,
+            title: 'LOYAL'
+        },
+    ];
+
+    $(document).ready(function(){
+        var svg = d3.select('#charts');
+        var container_width = parseInt($('.container').css('width'));
+        var container_height = parseInt($('.container').css('height'));
+        var marginLeftSvg = parseInt($('#charts').css('margin-left'));
+        var marginTopSvg = parseInt($('#charts').css('margin-top'));
+        var svgWidth = container_width - marginLeftSvg*2;
+        var svgHeight = container_height - marginTopSvg*2;
+        var svgPaddingLeft = svgWidth/24;
+        var gtWidth = svgWidth - svgPaddingLeft*2;
+        var chartWidth = gtWidth/5;
+        var chartHeight = svgHeight;
+        svg.attr('width',svgWidth)
+            .attr('height',svgHeight)
+            .style('background-color','#fff');
+        var i;
+        var bigRectY = chartHeight/160*34;
+        var y = bigRectY;
+
+        var x = svgPaddingLeft; 
+
+        for(i = 0; i < 5; i++){
+            if(i > 0){
+                var chart = new Chart();
+                chart.id = "#chart"+(i+1);
+                chart.x = x;
+                chart.width = chartWidth;
+                chart.height = chartHeight;
+                chart.bigRectY = bigRectY;
+                chart.rectY = y;
+                chart.heightRate = heightRateArr[i-1];
+                chart.color = colorArr[i-1];
+
+                chart.start_count = data[i-1].count;
+                chart.start_value = data[i-1].value;
+                chart.start_conversion = data[i-1].conversion;
+                chart.start_conversionChange = data[i-1].conversionChange;
+
+                chart.end_count = data1[i-1].count;
+                chart.end_value = data1[i-1].value;
+                chart.end_conversion = data1[i-1].conversion;
+                chart.end_conversionChange = data1[i-1].conversionChange;
+
+                chart.title = data[i-1].title;
+                chart.manCnt = 7-i;
+                chart.per_count = parseInt((chart.end_count-chart.start_count) * change_speed);
+
+                chart.paddingTop = chart.height/160*12;
+                chart.lineHeight = chart.height - chart.paddingTop*2;
+                chart.rectHeight = chart.lineHeight - (chart.rectY-chart.paddingTop)*2;
+                chart.per_rectHeight = chart.rectHeight*(chart.end_conversionChange-chart.start_conversionChange)/100*change_speed;
+                chart.rectHeight_ind = chart.rectHeight*chart.start_conversionChange/100;
+                chart.count_ind = chart.start_count;
+
+                charts.push(chart);
+
+                y = chart.rectY + chartHeight * chart.heightRate;
+            }else{
+                var chart = new Chart();
+                chart.id = "#chart"+(i+1);
+                chart.x = x;
+                chart.width = chartWidth;
+                chart.height = chartHeight;
+                chart.conversion = 'Coversion Rate';
+                chart.chart_flag = 1;
+                chart.conversionChange = 'Change';
+                chart.end_flag = 1;
+
+                charts.push(chart);
+            }
+            x += chartWidth;
+        }
+
+        for(i = 0; i < charts.length; i++){
+            charts[i].draw();
+        }
+
+        myTimer = setInterval(function(){OnTimer()}, 38);
+    })
+
+    function OnTimer(){
+        var i, end_flag = 1;
+        for(i = 0; i < charts.length; i++){
+            charts[i].OnTimer();
+            if(charts[i].end_flag == 0){
+                end_flag = 0;
+            }
+        }
+        if(end_flag == 1){
+            clearTimeout(myTimer);
+            // if(data1_flag == 1){
+            //     clearTimeout(myTimer);
+            // }else{
+            //     data1_flag = 1;
+            //     for(i = 1; i < 5; i++){
+            //         charts[i].rectHeight_ind = charts[i].rectHeight_ind/2;
+            //         charts[i].per_rectHeight = charts[i].rectHeight*(data1[i-1].conversionChange-charts[i].conversionChange)/100*change_speed;
+            //         charts[i].conversionChange = data1[i-1].conversionChange;
+            //         charts[i].end_flag = 0;
+            //         charts[i].draw();
+            //     }
+            // }
+        }
+    }
+</script>

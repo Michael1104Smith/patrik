@@ -1,0 +1,100 @@
+@font-face {
+  font-family: 'OpenSans';
+  src: url('../fonts/OpenSans-Regular.ttf'); /* IE9 Compat Modes */
+}
+body,
+text{
+	font-family: 'OpenSans' !important;
+}
+.container{
+	width: 1900px;
+	height: 639px;
+	margin:30px auto;
+	background-color: #f3f3f5;
+}
+.bigFontSize{
+	font-size: 24px;
+}
+#charts{
+	margin-left: 60px;
+	margin-top: 20px;
+}
+#chart2 .middlerectcolor,
+.uprect2,
+.downrect2{
+	fill: #127d69;
+	stroke: #127d69;
+}
+#chart3 .middlerectcolor{
+	fill: #169f85;
+	stroke: #169f85;
+}
+#chart4 .middlerectcolor{
+	fill: #1ab394;
+	stroke: #1ab394;
+}
+#chart5 .middlerectcolor{
+	fill: #46bea2;
+	stroke: #46bea2;
+}
+.uprect1,
+.downrect1{
+	fill: #ee8f9d;
+}
+.blackFill{
+	fill: black;
+}
+.whiteFill{
+	fill: #fff;
+}
+.noneFill{
+	fill: none;
+}
+@media (max-width: 1900px){
+	.container{
+		width: 1500px;
+		height: 500px;
+	}
+}
+@media (max-width: 1500px){
+	.container{
+		width: 1200px;
+		height: 400px;
+	}
+}
+@media (max-width: 1200px){
+	.container{
+		width: 900px;
+		height: 300px;
+	}
+}
+@media (max-width: 900px){
+	.container{
+		width: 750px;
+		height: 250px;
+	}
+}
+@media (max-width: 750px){
+	.container{
+		width: 600px;
+		height: 200px;
+	}
+}
+@media (max-width: 600px){
+	.container{
+		width: 540px;
+		height: 180px;
+	}
+}
+@media (max-width: 540px){
+	.container{
+		width: 420px;
+		height: 140px;
+	}
+}
+@media (max-width: 420px){
+	.container{
+		width: 300px;
+		height: 100px;
+	}
+}
